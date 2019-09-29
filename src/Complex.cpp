@@ -15,31 +15,42 @@ using namespace std;
 
 std::ostream& operator<<(std::ostream &strm, const Complex &complex)
 {
-    strm<<complex.a<<" "<<complex.b<<"i"<<endl;
+    strm<<complex.a;
+    if (!complex.b.iszero())
+    {
+        strm<<"+"<<complex.b<<"i";
+    }
+    strm<<endl;
     return strm;
 }
-Complex::Complex(int r, int i )
+Complex::Complex(Fraction r, Fraction i )
 {
     a = r;
     b = i;
 }
 Complex Complex::operator + (Complex const &obj)
 {
-    Complex res;
+    Complex res(0,1);
     res.a = a + obj.a;
     res.b = b + obj.b;
     return res;
 }
 Complex Complex::operator * (Complex const &obj)
 {
-    Complex res;
-    res.a = a * obj.a-b * obj.b;
+    Complex res(0,1);
+    res.a = a * obj.a+(b * obj.b)*(-1);
     res.b = a* obj.b +b*obj.a;
     return res;
 }
-
+Complex Complex::operator * (int const scalar)
+{
+    Complex res(0,1);
+    res.a = a * scalar;
+    res.b = b*scalar;
+    return res;
+}
 
 float Complex::module()
 {
-    return sqrt(pow(a,2)+pow(b,2));
+    return sqrt(pow(a.getfloat(),2)+pow(b.getfloat(),2));
 }

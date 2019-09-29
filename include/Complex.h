@@ -1,6 +1,7 @@
 #ifndef COMPLEX_H
 #define COMPLEX_H
 
+#include "Fraction.h"
 #include <ostream>
 #include <list>
 #include <iterator>
@@ -9,11 +10,11 @@
 class Complex
 {
 private:
-    int a; // reelle
-    int b; // imaginaire
+    Fraction a; // reelle
+    Fraction b; // imaginaire
 
 public:
-    Complex(int r = 0, int i =0);
+    Complex(Fraction r , Fraction i) ;
     Complex operator + (Complex const &obj);
     Complex operator * (Complex const &obj);
     Complex operator * (int const scalar);
