@@ -7,19 +7,19 @@ using namespace std;
 
 int main()
 {
+    /*
+            cout << "Hello world!" << endl;
 
-        cout << "Hello world!" << endl;
+            Complex c1(10, 5), c2(2, 4);
 
-        Complex c1(10, 5), c2(2, 4);
+            Complex c3 = c1 + c2;
 
-        Complex c3 = c1 + c2;
-
-        cout<<c3<<"module:"<<c3.module()<<endl;
-        Fraction c4(4,2);
-        cout<<c4<<endl;
-        Fraction f5(4,3);
-        cout<<f5<<endl;
-
+            cout<<c3<<"module:"<<c3.module()<<endl;
+            Fraction c4(4,2);
+            cout<<c4<<endl;
+            Fraction f5(4,3);
+            cout<<f5<<endl;
+    */
     /*
     Matrix m("M1",3,3);
     m.alea();
@@ -31,6 +31,11 @@ int main()
     cout<<"determinant:"<<m.determinant()<<endl;
     cout<<m.inverse()<<endl;
     */
+    Matrix m("M1",3,3);
+    m.alea();
+    cout<<m<<endl;
+    cout<<"DET="<<m.determinant()<<endl;
 
+    cout<<m.inverse()<<endl;
     return 0;
 }

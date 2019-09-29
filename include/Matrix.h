@@ -5,33 +5,35 @@
 #include <list>
 #include <iterator>
 #include <vector>
+#include "Complex.h"
 
 class Matrix
 {
 private:
     std::string name;
-    int ** matrice;
+    Complex ** matrice;
     int rowmax;
     int colmax;
-    int finaldeterminant(int a, int b, int c, int d);
-    int determinant(int lig, int coldebut, int colfin, std::vector <int> colexclues);
+    Complex finaldeterminant(Complex a, Complex b, Complex c, Complex d);
+    Complex determinant(int lig, int coldebut, int colfin, std::vector <int> colexclues);
 
 public:
     Matrix(std::string name,int nbrow,int nbcol);
     virtual ~Matrix();
-
+ bool operator != (Matrix const &obj);
     // fill matrix with random number
     void alea();
     //  true if matrix size is n*n
     bool isSquare();
     bool isSymetrique();
-    int trace();
+    Complex trace();
     Matrix operator + (Matrix const &other);
     Matrix operator * (Matrix const &other);
     Matrix operator * (int const scalar);
+    Matrix operator / (Complex const &other);
     Matrix transpose ();
     Matrix inverse();
-    int determinant();
+    Complex determinant();
 
     friend std::ostream& operator<<(std::ostream&, const Matrix&);
 protected:

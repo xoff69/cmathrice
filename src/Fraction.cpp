@@ -33,6 +33,12 @@ Fraction::Fraction(int n, int d )
     numerateur = n;
     denominateur = d;
 }
+bool Fraction::operator != (Fraction const &obj)
+{
+
+    return numerateur == obj.numerateur&&denominateur==obj.denominateur;
+
+}
 Fraction Fraction::operator + (Fraction const &obj)
 {
     Fraction res;

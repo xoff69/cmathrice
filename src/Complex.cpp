@@ -20,8 +20,19 @@ std::ostream& operator<<(std::ostream &strm, const Complex &complex)
     {
         strm<<"+"<<complex.b<<"i";
     }
-    strm<<endl;
     return strm;
+}
+Complex::Complex()
+{
+    Fraction f(0,1);
+    a=f;
+    b=f;
+}
+bool Complex::operator != (Complex const &obj)
+{
+
+    return a!=obj.a&&b!=obj.b;
+
 }
 Complex::Complex(Fraction r, Fraction i )
 {

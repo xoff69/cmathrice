@@ -14,11 +14,16 @@ private:
     Fraction b; // imaginaire
 
 public:
-    Complex(Fraction r , Fraction i) ;
+    Complex() ;
+    Complex(Fraction r, Fraction i) ;
     Complex operator + (Complex const &obj);
     Complex operator * (Complex const &obj);
     Complex operator * (int const scalar);
-
+    bool operator != (Complex const &obj);
+    bool iszero() const
+    {
+        return a.iszero()||b.iszero();
+    };
     float module();
 
     friend std::ostream& operator<<(std::ostream&, const Complex&);

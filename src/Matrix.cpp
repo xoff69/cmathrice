@@ -9,6 +9,7 @@
 #include <list>
 #include <vector>
 #include <algorithm>
+#include "Complex.h"
 
 using namespace std;
 
@@ -31,9 +32,9 @@ std::ostream& operator<<(std::ostream &strm, const Matrix &a)
 
 Matrix::Matrix(string nam,int nbrow,int nbcol)
 {
-    matrice = new int*[nbrow];
+    matrice = new Complex*[nbrow];
     for(int i = 0; i < nbrow; ++i)
-        matrice[i] = new int[nbcol];
+        matrice[i] = new Complex[nbcol];
     rowmax = nbrow;
     colmax = nbcol;
     name=nam;
@@ -62,19 +63,20 @@ Matrix Matrix::transpose()
     }
     return transposee;
 }
-int   Matrix::trace()
+Complex   Matrix::trace()
 {
     assert (isSquare());
-    int trace = 0;
+    Complex trace ;
     int i = 0;
     // on a rowmax=col
     while (i < rowmax)
     {
-        trace += matrice[i][i];
+        trace =trace+ matrice[i][i];
         i++;
     }
     return trace;
 }
+
 bool   Matrix::isSymetrique()
 {
     Matrix transposee=transpose();
@@ -93,30 +95,39 @@ void   Matrix:: alea()
     {
         for(int j = 0; j < colmax; ++j)
         {
-            matrice[i][j]=rand() % 7;
+            Fraction f1(rand() % 7,rand() % 7);
+            Fraction f2(rand() % 7,rand() % 7);
+            Complex cx(f1,f2);
+            matrice[i][j]=cx;
         }
     }
 }
 
 Matrix Matrix::operator + (Matrix const &other)
 {
-    Matrix res("+"+name,rowmax,colmax);
-
+    Matrix res(name,rowmax,colmax);
+    cout<<"todo+"<<endl;
     return res;
+}
+Matrix Matrix::operator / (Complex const &other){
+    Matrix res(name,rowmax,colmax);
+cout<<"todo //"<<endl;
+    return res;
+
 }
 Matrix Matrix::operator * (Matrix const &other)
 {
     assert(colmax==other.rowmax);
-    Matrix produit ("*"+name,rowmax, other.colmax);
+    Matrix produit (name,rowmax, other.colmax);
     for (int i = 0; i < produit.rowmax; i++)
     {
         for (int j = 0; j < produit.colmax; j++)
         {
             // matrice 1 1 c'est le produit de la premiere ligne par les elements de la premiere colonne
-            int prod = 0;
+            Complex prod (0,1);
             for (int k = 0; k < colmax; k++)
             {
-                prod += matrice[i][k] * other.matrice[k][j];
+                prod =prod+ matrice[i][k] * other.matrice[k][j];
             }
 
             produit.matrice[i][j] = prod;
@@ -126,7 +137,7 @@ Matrix Matrix::operator * (Matrix const &other)
 }
 Matrix Matrix::operator * (int const scalar)
 {
-    Matrix res("*"+name,rowmax,colmax);
+    Matrix res(name,rowmax,colmax);
     for(int i = 0; i < rowmax; ++i)
     {
         for(int j = 0; j < colmax; ++j)
@@ -137,12 +148,12 @@ Matrix Matrix::operator * (int const scalar)
     return res;
 }
 
-int   Matrix::finaldeterminant(int a, int b, int c, int d)
+Complex   Matrix::finaldeterminant(Complex a, Complex b, Complex c, Complex d)
 {
-    return a * d - (b * c);
+    return a * d + (b * c)*(-1);
 }
 
-int   Matrix::determinant(int lig, int coldebut, int colfin, std::vector<int> colexclues)
+Complex   Matrix::determinant(int lig, int coldebut, int colfin, std::vector<int> colexclues)
 {
     if (rowmax- lig == 2)
     {
@@ -159,7 +170,7 @@ int   Matrix::determinant(int lig, int coldebut, int colfin, std::vector<int> co
         return finaldeterminant(matrice[lig][inc.at(0)], matrice[lig][inc.at(1)], matrice[lig + 1][inc.at(0)], matrice[lig + 1][inc.at(1)]);
     }
     int signe = 1;
-    int ldeterminant = 0;
+    Complex ldeterminant (0,0);
     for (int i = coldebut; i < colfin; i++)
     {
         if (!std::count(colexclues.begin(), colexclues.end(), i))
@@ -168,7 +179,7 @@ int   Matrix::determinant(int lig, int coldebut, int colfin, std::vector<int> co
             localList.insert(localList.end(), colexclues.begin(), colexclues.end());
 
             localList.push_back(i);
-            int loc = matrice[lig][i] * determinant(lig + 1, coldebut, colfin, localList);
+            Complex loc = matrice[lig][i] * determinant(lig + 1, coldebut, colfin, localList);
             ldeterminant = ldeterminant + (loc * signe);
 
             signe = -signe;
@@ -178,7 +189,7 @@ int   Matrix::determinant(int lig, int coldebut, int colfin, std::vector<int> co
 }
 
 
-int   Matrix::determinant()
+Complex   Matrix::determinant()
 {
     std::vector<int> inc;
     return determinant(0, 0, colmax, inc);
@@ -189,8 +200,8 @@ Matrix   Matrix::inverse()
 
     Matrix inverse (""+name+"-1",rowmax, colmax);
     // a: calcul du determinant !=0
-    int ldeterminant = determinant();
-    assert (ldeterminant != 0);
+    Complex ldeterminant = determinant();
+    assert (!ldeterminant.iszero());
     assert (isSymetrique() != 0);
     // b: cofacteur
     // b1: calcul de cofacteur
@@ -224,7 +235,7 @@ Matrix   Matrix::inverse()
         }
     }
     //    System.out.println("etape 1\n:" + inverse);
-    inverse=inverse*(1 / ldeterminant);
+    inverse=inverse / ldeterminant;
     //    System.out.println("etape 2:" + inverse);
     // b2: on met le signe du cofacteur
     int signe = 1;
