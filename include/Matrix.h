@@ -6,7 +6,7 @@
 #include <iterator>
 #include <vector>
 #include "Complex.h"
-
+// Matrix declaration
 class Matrix
 {
 private:
@@ -20,7 +20,8 @@ private:
 public:
     Matrix(std::string name,int nbrow,int nbcol);
     virtual ~Matrix();
- bool operator != (Matrix const &obj);
+    Matrix(Matrix const &obj) ;
+    bool operator != (Matrix const &obj);
     // fill matrix with random number
     void alea();
     //  true if matrix size is n*n
@@ -31,6 +32,10 @@ public:
     Matrix operator * (Matrix const &other);
     Matrix operator * (int const scalar);
     Matrix operator / (Complex const &other);
+    void set(int l,int c, Complex const value)
+    {
+        matrice[l][c]=value;
+    };
     Matrix transpose ();
     Matrix inverse();
     Complex determinant();

@@ -24,7 +24,6 @@ std::ostream& operator<<(std::ostream &strm, const Fraction &fraction)
     {
         strm<<"/"<<w.getDenominateur();
     }
-    //strm<<endl;
     return strm;
 }
 Fraction::Fraction(int n, int d )
@@ -32,6 +31,11 @@ Fraction::Fraction(int n, int d )
     assert(d!=0);
     numerateur = n;
     denominateur = d;
+}
+Fraction Fraction::operator / (Fraction const &other){
+    //ad / bc
+    return Fraction(numerateur*other.denominateur,denominateur*other.numerateur);
+
 }
 bool Fraction::operator != (Fraction const &obj)
 {

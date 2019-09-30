@@ -12,11 +12,11 @@
 #include "Complex.h"
 
 using namespace std;
-
+// for cout matrix
 std::ostream& operator<<(std::ostream &strm, const Matrix &a)
 {
 
-    strm<<endl<<a.name<<"(";
+    strm<<endl<<a.name<<"("<<endl;
     for(int i = 0; i < a.rowmax; ++i)
     {
         for(int j = 0; j < a.colmax; ++j)
@@ -29,7 +29,7 @@ std::ostream& operator<<(std::ostream &strm, const Matrix &a)
     return strm;
 }
 
-
+// construct matrix
 Matrix::Matrix(string nam,int nbrow,int nbcol)
 {
     matrice = new Complex*[nbrow];
@@ -39,7 +39,16 @@ Matrix::Matrix(string nam,int nbrow,int nbcol)
     colmax = nbcol;
     name=nam;
 }
-
+// copy construct
+Matrix::Matrix(Matrix const &obj)
+{
+    matrice = new Complex*[obj.rowmax];
+    for(int i = 0; i < obj.rowmax; ++i)
+        matrice[i] = new Complex[obj.colmax];
+    rowmax = obj.rowmax;
+    colmax = obj.colmax;
+    name=obj.name;
+}
 Matrix::~Matrix()
 {
     // cout<<"delete matrice"<<endl;
@@ -47,10 +56,12 @@ Matrix::~Matrix()
         delete [] matrice[i];
     delete [] matrice;
 }
+// isMatrix square?
 bool   Matrix:: isSquare()
 {
     return rowmax == colmax;
 }
+// tMatrix, transposition
 Matrix Matrix::transpose()
 {
     Matrix transposee("t"+name,colmax, rowmax);
@@ -63,6 +74,7 @@ Matrix Matrix::transpose()
     }
     return transposee;
 }
+// trace of the matrix
 Complex   Matrix::trace()
 {
     assert (isSquare());
@@ -76,19 +88,20 @@ Complex   Matrix::trace()
     }
     return trace;
 }
-
+// return true if matrix is symetric
 bool   Matrix::isSymetrique()
 {
-    Matrix transposee=transpose();
+
     for (int i = 0; i < rowmax; i++)
     {
         for (int j = 0; j < colmax; j++)
         {
-            if (matrice[i][j] != transposee.matrice[i][j]) return false;
+            if (matrice[i][j] != matrice[j][i]) return false;
         }
     }
     return true;
 }
+// fill matrix with random number
 void   Matrix:: alea()
 {
     for(int i = 0; i < rowmax; ++i)
@@ -102,19 +115,37 @@ void   Matrix:: alea()
         }
     }
 }
-
+// matrix (m,n) + matrix(m,n)
 Matrix Matrix::operator + (Matrix const &other)
 {
-    Matrix res(name,rowmax,colmax);
-    cout<<"todo+"<<endl;
+    assert(rowmax==other.rowmax&&colmax==other.colmax)
+    Matrix res(name+"+"+other.name,rowmax,colmax);
+    for(int i = 0; i < rowmax; ++i)
+    {
+        for(int j = 0; j < colmax; ++j)
+        {
+            res.matrice[i][j] =matrice[i][j]+other.matrice[i][j];
+        }
+    }
+
     return res;
 }
-Matrix Matrix::operator / (Complex const &other){
+// matrix / complex
+Matrix Matrix::operator / (Complex const &other)
+{
     Matrix res(name,rowmax,colmax);
-cout<<"todo //"<<endl;
+    for(int i = 0; i < rowmax; ++i)
+    {
+        for(int j = 0; j < colmax; ++j)
+        {
+            res.matrice[i][j] =matrice[i][j] /other;
+        }
+    }
+
     return res;
 
 }
+// matrix * matrix
 Matrix Matrix::operator * (Matrix const &other)
 {
     assert(colmax==other.rowmax);
@@ -135,6 +166,7 @@ Matrix Matrix::operator * (Matrix const &other)
     }
     return produit;
 }
+// Matrix * scalar
 Matrix Matrix::operator * (int const scalar)
 {
     Matrix res(name,rowmax,colmax);
@@ -147,12 +179,12 @@ Matrix Matrix::operator * (int const scalar)
     }
     return res;
 }
-
+// private intermediate method
 Complex   Matrix::finaldeterminant(Complex a, Complex b, Complex c, Complex d)
 {
     return a * d + (b * c)*(-1);
 }
-
+// private intermediate method
 Complex   Matrix::determinant(int lig, int coldebut, int colfin, std::vector<int> colexclues)
 {
     if (rowmax- lig == 2)
@@ -180,29 +212,32 @@ Complex   Matrix::determinant(int lig, int coldebut, int colfin, std::vector<int
 
             localList.push_back(i);
             Complex loc = matrice[lig][i] * determinant(lig + 1, coldebut, colfin, localList);
+            // cout <<"signe:"<<signe<<"/avant "<<ldeterminant<<"=>"<<loc<<"->"<<(loc*signe)<<endl;
             ldeterminant = ldeterminant + (loc * signe);
-
+            // cout <<"apres "<<ldeterminant<<endl;
             signe = -signe;
         }
     }
+    //  cout<<"det:"<<ldeterminant<<endl;
     return ldeterminant;
 }
 
-
+// public method to compute determinant
 Complex   Matrix::determinant()
 {
     std::vector<int> inc;
     return determinant(0, 0, colmax, inc);
 }
-
+// M^-1
 Matrix   Matrix::inverse()
 {
 
     Matrix inverse (""+name+"-1",rowmax, colmax);
     // a: calcul du determinant !=0
     Complex ldeterminant = determinant();
+
     assert (!ldeterminant.iszero());
-    assert (isSymetrique() != 0);
+
     // b: cofacteur
     // b1: calcul de cofacteur
     for (int i = 0; i < rowmax; i++)
@@ -218,7 +253,6 @@ Matrix   Matrix::inverse()
                 {
                     if (u != i && v != j)
                     {
-                        //   System.out.println("("+i+","+j+")"+"("+u+","+v+")->k="+k+"-"+l);
                         sub.matrice[k][l++] = matrice[u][v];
                     }
                 }
@@ -229,26 +263,25 @@ Matrix   Matrix::inverse()
                 l = 0;
             }
 
-            //    System.out.println("sub:\n" + sub);
-            // System.out.println("det:"+i+"-"+j+":"+sub.determinant());
             inverse.matrice[i][j] = sub.determinant();
         }
     }
-    //    System.out.println("etape 1\n:" + inverse);
-    inverse=inverse / ldeterminant;
-    //    System.out.println("etape 2:" + inverse);
+    //  cout<<"etape 1\n:" << inverse;
+    Matrix inverse2 (inverse / ldeterminant);
+
+    // cout<<"etape 2:" << inverse2;
     // b2: on met le signe du cofacteur
     int signe = 1;
     for (int i = 0; i < rowmax; i++)
     {
         for (int j = 0; j < colmax; j++)
         {
-
-            inverse.matrice[i][j] = inverse.matrice[i][j] * signe;
+            // cout<<"cofacteur="<<inverse2.matrice[i][j]<<endl;
+            inverse2.matrice[i][j] = inverse2.matrice[i][j] * signe;
             signe = -signe;
         }
     }
     // c: transposee
-    //    System.out.println("etape 3:" + inverse);
-    return inverse.transpose();
+    //  cout<<"etape 3:"<< inverse2;
+    return inverse2.transpose();
 }

@@ -1,6 +1,6 @@
 #include "Complex.h"
 #include <iostream>
-#include <stdio.h>      /* printf */
+#include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
@@ -22,6 +22,11 @@ std::ostream& operator<<(std::ostream &strm, const Complex &complex)
     }
     return strm;
 }
+Complex::Complex(Complex const &obj)
+{
+    a=obj.a;
+    b=obj.b;
+}
 Complex::Complex()
 {
     Fraction f(0,1);
@@ -34,28 +39,51 @@ bool Complex::operator != (Complex const &obj)
     return a!=obj.a&&b!=obj.b;
 
 }
-Complex::Complex(Fraction r, Fraction i )
+Complex::Complex(Fraction const &r, Fraction const &i )
 {
     a = r;
     b = i;
 }
 Complex Complex::operator + (Complex const &obj)
 {
-    Complex res(0,1);
+    Fraction f1(0,1);
+    Complex res(f1,f1);
     res.a = a + obj.a;
     res.b = b + obj.b;
     return res;
 }
 Complex Complex::operator * (Complex const &obj)
 {
-    Complex res(0,1);
+    Fraction f1(0,1);
+    Complex res(f1,f1);
     res.a = a * obj.a+(b * obj.b)*(-1);
     res.b = a* obj.b +b*obj.a;
     return res;
 }
-Complex Complex::operator * (int const scalar)
+Complex Complex::operator / (Complex const &other)
 {
-    Complex res(0,1);
+
+    float num=sqrt(pow(other.a.getfloat(),2)+pow(other.b.getfloat(),2));
+    Complex cc(*this);
+    float f=1/num;
+    Complex n(cc*other.conjugue());
+    //cout<<" 1/f="<<(1/f)<<"division:"<<other<<" soit "<<(n*f)<<endl;
+    return n*f;
+
+}
+Complex Complex::operator * (float const &scalar)
+{
+    Fraction f1(0,1);
+    Complex res(f1,f1);
+    res.a = a * scalar;
+    res.b = b*scalar;
+    return res;
+}
+Complex Complex::operator * (int const &scalar)
+{
+
+    Fraction f1(0,1);
+    Complex res(f1,f1);
     res.a = a * scalar;
     res.b = b*scalar;
     return res;
@@ -64,4 +92,12 @@ Complex Complex::operator * (int const scalar)
 float Complex::module()
 {
     return sqrt(pow(a.getfloat(),2)+pow(b.getfloat(),2));
+}
+Complex Complex::conjugue() const
+{
+    Fraction f1(a);
+    Fraction f2(b);
+    f2=f2*-1;
+    Complex x(f1,f2);
+    return x;
 }
