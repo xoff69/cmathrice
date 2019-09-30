@@ -12,7 +12,7 @@ Informations
  Todo/improvement:
  - improve Fraction simplify method
  - add operators to fraction, complex, matrix
- - add 
+
  
  
  Legal
